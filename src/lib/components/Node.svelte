@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { INode } from "$lib/interfaces/types";
+    import * as icons from "carbon-icons-svelte";
     import { get, writable, type Writable } from "svelte/store";
     export let node: Writable<INode>;
 
@@ -38,6 +39,11 @@
 
 
 <div style="display: block;{getNodeCss($node)}">
-    <h4> { $node.name } </h4>
+    <!-- {$node.iconKey} -->
+    <h4> 
+    {#if getNodeAttr($node, "iconKey")}
+        <svelte:component this={icons[getNodeAttr($node, "iconKey")]} ></svelte:component>
+    {/if}
+        { $node.name } </h4>
     <p> { $node.description} </p>
 </div>

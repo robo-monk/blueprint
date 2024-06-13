@@ -23,6 +23,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@xyflow/svelte": "^0.1.5"
+		"@xyflow/svelte": "^0.1.5",
+		"carbon-icons-svelte": "^12.9.0"
 	}
 }

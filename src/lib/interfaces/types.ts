@@ -19,6 +19,7 @@ export interface INodeStyles {
 }
 export interface INodeTemplate {
     name: string,
+    icon: string,
     description: string,
     styles: INodeStyles
     tags: INodeTag[]

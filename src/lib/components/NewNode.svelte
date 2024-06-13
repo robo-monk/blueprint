@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { INode, INodeTag, INodeTemplate } from "$lib/interfaces/types";
+    import IconSelector from "./IconSelector.svelte";
     import Node from "./Node.svelte";
 
     import {
@@ -25,6 +26,7 @@
         y: 0,
         edges: [],
         template: undefined,
+        iconKey: "",
         id: 0,
         name: "New Node",
         description: "Node description",
@@ -60,6 +62,8 @@
         <TextInput id="backgroundColor" labelText="Background Color" bind:value={$node.styles.backgroundColor} required />
         <TextInput id="textColor" labelText="Text Color" bind:value={$node.styles.color} required />
         <TextInput id="padding" labelText="Padding" bind:value={$node.styles.padding} required />
+
+        <IconSelector bind:icon={$node.iconKey} />
         <!-- <MultiSelect
             id="tags"
             label="Tags"
