@@ -1,0 +1,179 @@
+<!-- <script lang="ts">
+    import type { IProject } from "$lib/interfaces/types";
+    import NewNode from "./NewNode.svelte";
+    let sideBarOpen = true;
+    let project: IProject
+</script> -->
+<!--
+
+<div>
+    <NewNode></NewNode>
+</div>
+
+<div></div> -->
+
+<script lang="ts">
+    import {
+        Header,
+        HeaderUtilities,
+        HeaderAction,
+        HeaderPanelLinks,
+        HeaderPanelDivider,
+        HeaderPanelLink,
+        SideNav,
+        SideNavItems,
+        SideNavMenu,
+        SideNavMenuItem,
+        SideNavLink,
+        SkipToContent,
+        Content,
+        Grid,
+        Row,
+        Column,
+        Button,
+    } from "carbon-components-svelte";
+    import NewNodeTemplate from "./NewNodeTemplate.svelte";
+    import {
+        newNodeFromTemplate,
+        type INode,
+        type INodeTemplate,
+        type IProject,
+    } from "$lib/interfaces/types";
+    // import Node from "./Node.svelte";
+    import NodeTemplate from "./NodeTemplate.svelte";
+    import { Add } from "carbon-icons-svelte";
+    import {
+        Background,
+        BackgroundVariant,
+        Controls,
+        SvelteFlow,
+        type NodeTypes,
+        type Node as XyFlowNode,
+        type Edge as XyFlowEdge,
+    } from "@xyflow/svelte";
+    import { writable, type Writable } from "svelte/store";
+    import FlowNode from "./FlowNode.svelte";
+
+    const INodeToXyFlowNode = (node: INode): XyFlowNode => ({
+        id: node.id.toString(),
+        type: "node",
+        position: {
+            x: node.x,
+            y: node.y,
+        },
+        data: { node },
+    });
+
+    const XyFlowNodeToINode = (node: XyFlowNode): INode => ({
+        ...(node.data.node as INode),
+        edges: [],
+        id: parseInt(node.id),
+        x: node.position.x,
+        y: node.position.y,
+    });
+
+    const newXyFlowNodeFromTemplate = (
+        id: number,
+        node: INodeTemplate,
+    ): XyFlowNode => ({
+        ...INodeToXyFlowNode(newNodeFromTemplate(node)),
+        id: id.toString(),
+    });
+
+    let isSideNavOpen = false;
+    let isOpen = false;
+
+    export let project: Writable<IProject>;
+
+    let isNewNodeTemplateOpen = $project.templates.length == 0;
+
+    const nodes = writable<XyFlowNode[]>($project.nodes.map(INodeToXyFlowNode));
+    nodes.subscribe((flowNodes) => {
+        $project.nodes = flowNodes.map(XyFlowNodeToINode);
+    });
+
+    // same for edges
+    const edges = writable<XyFlowEdge[]>([]);
+
+    const nodeTypes = {
+        node: FlowNode,
+    };
+
+    // $: $project.templates.forEach(template => {
+    //     nodeTypes[template.name] = template
+    // })
+</script>
+
+<Header company="Blueprint" platformName={$project.name} bind:isSideNavOpen>
+    <HeaderUtilities>
+        <HeaderAction bind:isOpen preventCloseOnClickOutside>
+            <Column>
+                <!-- <hr> -->
+                {#if isNewNodeTemplateOpen}
+                    <NewNodeTemplate
+                        on:create={({ detail }) => {
+                            project.update((p) => {
+                                p.templates.push(detail);
+                                return p;
+                            });
+                            isNewNodeTemplateOpen = false;
+                        }}
+                        on:cancel={() => (isNewNodeTemplateOpen = false)}
+                    />
+                {:else}
+                    <div style="margin-top: 20px; display: flex; gap: 5px;">
+                        {#each $project.templates as nodeTemplate}
+                            <!-- svelte-ignore a11y-click-events-have-key-events -->
+                            <div
+                                role="button"
+                                tabindex="0"
+                                on:click={() =>
+                                    nodes.update((nodes) => {
+                                        nodes.push(
+                                            newXyFlowNodeFromTemplate(
+                                                nodes.length,
+                                                nodeTemplate,
+                                            ),
+                                        );
+                                        return nodes;
+                                    })}
+                            >
+                                <NodeTemplate {nodeTemplate} />
+                            </div>
+                        {/each}
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <Button
+                            icon={Add}
+                            on:click={() => (isNewNodeTemplateOpen = true)}
+                            >New Template</Button
+                        >
+                    </div>
+                {/if}
+            </Column>
+        </HeaderAction>
+    </HeaderUtilities>
+</Header>
+
+<div style="height:100vh;">
+    <SvelteFlow
+        {nodes}
+        {edges}
+        {nodeTypes}
+        snapGrid={[25, 25]}
+        fitView
+        on:nodeclick={(event) =>
+            console.log("on node click", event.detail.node)}
+    >
+        <Controls />
+        <Background variant={BackgroundVariant.Dots} />
+        <!-- <MiniMap /> -->
+    </SvelteFlow>
+</div>
+
+<style lang="scss">
+    :global(.bx--header-panel--expanded) {
+        width: min(60vw, 32em);
+        overflow-y: scroll;
+    }
+</style>
