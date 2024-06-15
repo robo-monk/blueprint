@@ -36,12 +36,14 @@
     import {
         newNodeFromTemplate,
         type INode,
+        type INodeEdge,
         type INodeTemplate,
         type IProject,
     } from "$lib/interfaces/types";
-    // import Node from "./Node.svelte";
+
     import NodeTemplate from "./NodeTemplate.svelte";
-    import { Add } from "carbon-icons-svelte";
+    import { Add, Edit } from "carbon-icons-svelte";
+    import EditNode from "./EditNode.svelte";
     import {
         Background,
         BackgroundVariant,
@@ -51,7 +53,7 @@
         type Node as XyFlowNode,
         type Edge as XyFlowEdge,
     } from "@xyflow/svelte";
-    import { writable, type Writable } from "svelte/store";
+    import { get, writable, type Writable } from "svelte/store";
     import FlowNode from "./FlowNode.svelte";
 
     const INodeToXyFlowNode = (node: INode): XyFlowNode => ({
@@ -61,11 +63,11 @@
             x: node.x,
             y: node.y,
         },
-        data: { node },
+        data: { node: writable(node) },
     });
 
     const XyFlowNodeToINode = (node: XyFlowNode): INode => ({
-        ...(node.data.node as INode),
+        ...(get(node.data.node) as INode),
         edges: [],
         id: parseInt(node.id),
         x: node.position.x,
@@ -88,12 +90,13 @@
     let isNewNodeTemplateOpen = $project.templates.length == 0;
 
     const nodes = writable<XyFlowNode[]>($project.nodes.map(INodeToXyFlowNode));
+
     nodes.subscribe((flowNodes) => {
         $project.nodes = flowNodes.map(XyFlowNodeToINode);
     });
 
-    // same for edges
-    const edges = writable<XyFlowEdge[]>([]);
+    const edges = writable<XyFlowEdge[]>($project.edges || []);
+    edges.subscribe((edges) => ($project.edges = edges));
 
     const nodeTypes = {
         node: FlowNode,
@@ -102,13 +105,28 @@
     // $: $project.templates.forEach(template => {
     //     nodeTypes[template.name] = template
     // })
+
+    // let editingNode: INode | null = null;
+    let editingNode: Writable<INode> | null = null;
+    let isEditOpen = false;
 </script>
 
 <Header company="Blueprint" platformName={$project.name} bind:isSideNavOpen>
     <HeaderUtilities>
+        <HeaderAction
+            bind:isOpen={isEditOpen}
+            preventCloseOnClickOutside
+            icon={Edit}
+        >
+            {#if !editingNode}
+                <p>Nothing selected to edit</p>
+            {:else}
+                <EditNode node={editingNode} />
+            {/if}
+        </HeaderAction>
+
         <HeaderAction bind:isOpen preventCloseOnClickOutside>
             <Column>
-                <!-- <hr> -->
                 {#if isNewNodeTemplateOpen}
                     <NewNodeTemplate
                         on:create={({ detail }) => {
@@ -121,7 +139,9 @@
                         on:cancel={() => (isNewNodeTemplateOpen = false)}
                     />
                 {:else}
-                    <div style="margin-top: 20px; display: flex; gap: 5px;">
+                    <div
+                        style="margin-top: 20px; display: flex; gap: 5px; flex-wrap: wrap;"
+                    >
                         {#each $project.templates as nodeTemplate}
                             <!-- svelte-ignore a11y-click-events-have-key-events -->
                             <div
@@ -162,8 +182,13 @@
         {nodeTypes}
         snapGrid={[25, 25]}
         fitView
-        on:nodeclick={(event) =>
-            console.log("on node click", event.detail.node)}
+        on:nodeclick={(event) => {
+            console.log("on node click", event.detail.node);
+            editingNode = event.detail.node.data.node;
+            // $editingNode = XyFlowNodeToINode(event.detail.node);
+            isEditOpen = true;
+            isOpen = false;
+        }}
     >
         <Controls />
         <Background variant={BackgroundVariant.Dots} />

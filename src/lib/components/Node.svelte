@@ -69,6 +69,7 @@
 </script>
 
 <div style="display: block;{getNodeCss(node)}">
+    <!-- {JSON.stringify(node)} -->
     <h4>
         {#if getNodeAttr(node, "iconKey")}
             <svelte:component

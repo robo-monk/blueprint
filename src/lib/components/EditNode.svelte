@@ -14,112 +14,73 @@
         Button,
         Tag,
     } from "carbon-components-svelte";
-    import { writable } from "svelte/store";
+    import { writable, type Writable } from "svelte/store";
 
-    let tagOptions: INodeTag[] = [
-        { name: "Tag1", color: "#ff0000" },
-        { name: "Tag2", color: "#00ff00" },
-        { name: "Tag3", color: "#0000ff" },
-    ];
-
-    let nodeTemplate = writable<INodeTemplate>({
-        name: "Default Template",
-        iconKey: "",
-        description: "Default description",
-        styles: {
-            width: "fit-content",
-            height: "fit-content",
-            backgroundColor: "#ffffff",
-            color: "#000000",
-            padding: "20px",
-        },
-        tags: [],
-    });
-
-    let node: INode = {
-        template: $nodeTemplate,
-        id: 0,
-        x: 0,
-        y: 0,
-        edges: [],
-    };
-
-    $: node = {
-        template: $nodeTemplate,
-        id: 0,
-        x: 0,
-        y: 0,
-        edges: [],
-    };
-
+    export let node: Writable<INode>;
     $: console.log("->", node);
 
     const dispatch = createEventDispatcher<{
-        create: INodeTemplate;
-        cancel: INodeTemplate;
+        done: INode;
+        cancel: INode;
     }>();
 
     function handleSubmit() {
         // event.preventDefault();
         // console.log(nodeTemplate);
-        dispatch("create", $nodeTemplate);
+        dispatch("done", $node);
     }
 
     function handleCancel() {
-        dispatch("cancel", $nodeTemplate);
+        dispatch("cancel", $node);
     }
 </script>
 
 <div class="node-preview">
-    <Node {node}></Node>
+    <Node node={$node}></Node>
 </div>
 
 <div style="max-width: 500px; margin: auto;">
     <Form on:submit={handleSubmit}>
         <FormGroup legendText="Node Template Details">
-            <TextInput
-                id="name"
-                labelText="Name"
-                bind:value={$nodeTemplate.name}
-            />
+            <TextInput id="name" labelText="Name" bind:value={$node.name} />
             <TextInput
                 id="description"
                 labelText="Description"
-                bind:value={$nodeTemplate.description}
+                bind:value={$node.description}
             />
 
             <TextInput
                 id="width"
                 labelText="Width"
-                bind:value={$nodeTemplate.styles.width}
+                bind:value={$node.styles.width}
                 required
             />
             <TextInput
                 id="height"
                 labelText="Height"
-                bind:value={$nodeTemplate.styles.height}
+                bind:value={$node.styles.height}
                 required
             />
             <TextInput
                 id="backgroundColor"
                 labelText="Background Color"
-                bind:value={$nodeTemplate.styles.backgroundColor}
+                bind:value={$node.styles.backgroundColor}
                 required
             />
             <TextInput
                 id="textColor"
                 labelText="Text Color"
-                bind:value={$nodeTemplate.styles.color}
+                bind:value={$node.styles.color}
                 required
             />
             <TextInput
                 id="padding"
                 labelText="Padding"
-                bind:value={$nodeTemplate.styles.padding}
+                bind:value={$node.styles.padding}
                 required
             />
 
-            <IconSelector bind:icon={$nodeTemplate.iconKey} />
+            <IconSelector bind:icon={$node.styles.iconKey} />
             <!-- <MultiSelect
                 id="tags"
                 label="Tags"
@@ -131,9 +92,9 @@
             /> -->
         </FormGroup>
 
-        <Button type="submit">Create Template</Button>
+        <Button type="submit">Done Editing</Button>
         <Button type="cancel" kind="danger" on:click={handleCancel}
-            >Cancel</Button
+            >Abort</Button
         >
     </Form>
 </div>

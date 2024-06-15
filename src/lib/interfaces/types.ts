@@ -1,9 +1,12 @@
 export type NodeId = number;
 
+import { type Edge as XyFlowEdge } from "@xyflow/svelte";
+
 export interface IProject {
   name: string;
   templates: INodeTemplate[];
   nodes: INode[];
+  edges: XyFlowEdge[];
 }
 
 export interface INodeTag {
@@ -34,7 +37,7 @@ export interface INodeEdge {
   label: string;
 }
 
-export interface INode extends Partial<INodeTemplate> {
+export interface INode extends INodeTemplate {
   id: NodeId;
   template: INodeTemplate;
   x: number;
@@ -49,5 +52,6 @@ export function newNodeFromTemplate(nodeTemplate: INodeTemplate): INode {
     y: 0,
     template: nodeTemplate,
     edges: [],
+    ...nodeTemplate,
   };
 }
