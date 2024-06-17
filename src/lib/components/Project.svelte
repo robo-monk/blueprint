@@ -68,7 +68,6 @@
 
     const XyFlowNodeToINode = (node: XyFlowNode): INode => ({
         ...(get(node.data.node) as INode),
-        edges: [],
         id: parseInt(node.id),
         x: node.position.x,
         y: node.position.y,

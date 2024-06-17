@@ -84,16 +84,15 @@
 </script>
 
 <div>
-    <div class="node-container" style={getNodeCss(node)}>
+    <div class="node-container" style={getNodeCss(node)} id={node.id}>
         <!-- {JSON.stringify(node)} -->
         <div class="inputs-container">
             {#each inputs as input}
                 <svelte:component
                     this={isInXyFlow ? Handle : HandleMock}
-                    type="source"
+                    type="target"
                     position={Position.Top}
-                    id={`${node.id}-i${input.id}`}
-                    isConnectable={true}
+                    id={input.id}
                     style="width:8px;height:8px;"
                 />
                 <div class="input-item">
@@ -125,8 +124,7 @@
                     this={isInXyFlow ? Handle : HandleMock}
                     type="source"
                     position={Position.Bottom}
-                    id={`${node.id}-o${output.id}`}
-                    isConnectable={true}
+                    id={output.id}
                     style="width:8px;height:8px;"
                 />
                 <div class="output-item">

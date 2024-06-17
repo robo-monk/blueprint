@@ -1,6 +1,7 @@
-export type NodeId = number;
+export type NodeId = string;
 
 import { type Edge as XyFlowEdge } from "@xyflow/svelte";
+import { nanoid } from 'nanoid';
 
 export interface IProject {
   name: string;
@@ -55,12 +56,12 @@ export interface INode extends Partial<INodeTemplate> {
 
 export function newNodeFromTemplate(nodeTemplate: INodeTemplate): INode {
   return {
-    id: 0,
+    id: nanoid(),
     x: 0,
     y: 0,
     templateName: nodeTemplate.name,
     styles: {},
-    // inputs: [],
-    // outputs: [],
+    inputs: nodeTemplate.inputs.map(inp => ({ ...inp, id: nanoid()})),
+    outputs: nodeTemplate.outputs.map(out => ({ ...out, id: nanoid()})),
   };
 }

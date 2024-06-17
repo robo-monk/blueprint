@@ -16,6 +16,7 @@
     } from "carbon-components-svelte";
     import { writable } from "svelte/store";
     import { Add } from "carbon-icons-svelte";
+    import { nanoid } from "nanoid";
 
     let tagOptions: INodeTag[] = [
         { name: "Tag1", color: "#ff0000" },
@@ -35,24 +36,22 @@
             padding: "20px",
         },
         tags: [],
+        inputs: [],
+        outputs: []
     });
 
     let node: INode = {
         // template: $nodeTemplate,
-        id: 0,
+        id: nanoid(),
         x: 0,
         y: 0,
-        edges: [],
         ...$nodeTemplate,
         templateName: $nodeTemplate.name,
     };
 
     $: node = {
         // template: $nodeTemplate,
-        id: 0,
-        x: 0,
-        y: 0,
-        edges: [],
+        ...node,
         ...$nodeTemplate,
         templateName: $nodeTemplate.name,
     };
@@ -153,7 +152,7 @@
                 on:click={() =>
                     ($nodeTemplate.inputs = [
                         ...($nodeTemplate.inputs || []),
-                        { label: "", color: "black", id: $nodeTemplate.inputs?.length || 0 },
+                        { label: "", color: "black", id: nanoid() },
                     ])}
             >
             </Button>
@@ -178,7 +177,7 @@
                 on:click={() =>
                     ($nodeTemplate.outputs = [
                         ...($nodeTemplate.outputs || []),
-                        { label: "", color: "black", id: $nodeTemplate.outputs?.length || 0},
+                        { label: "", color: "black", id: nanoid()},
                     ])}
             >
             </Button>
