@@ -26,7 +26,7 @@
     // };
 
     const getNodesTemplate = (node: INode) =>
-        get(project).templates.find((t) => t.name == node.templateName);
+        get(project).templates.find((t) => t.templateId == node.inheritsFrom);
 
     const getNestedProperty = (obj: object, path: string) => {
         const keys = path.split(".");
@@ -76,11 +76,11 @@
         }
     }
 
-    let inputs: IHandle[] = []
-    $: inputs = getNodeAttr(node, "inputs") || []
+    let inputs: IHandle[] = [];
+    $: inputs = getNodeAttr(node, "inputs") || [];
 
-    let outputs: IHandle[] = []
-    $: outputs = getNodeAttr(node, "outputs") || []
+    let outputs: IHandle[] = [];
+    $: outputs = getNodeAttr(node, "outputs") || [];
 </script>
 
 <div>
@@ -88,13 +88,15 @@
         <!-- {JSON.stringify(node)} -->
         <div class="inputs-container">
             {#each inputs as input}
-                <svelte:component
-                    this={isInXyFlow ? Handle : HandleMock}
-                    type="target"
-                    position={Position.Top}
-                    id={input.id}
-                    style="width:8px;height:8px;"
-                />
+                <div>
+                    <svelte:component
+                        this={isInXyFlow ? Handle : HandleMock}
+                        type="target"
+                        position={Position.Top}
+                        id={input.id}
+                        style="width:8px;height:8px;position:relative;left:revert;transform:revert;"
+                    />
+                </div>
                 <div class="input-item">
                     {#if input.label}
                         <small class="input-label">
@@ -105,7 +107,7 @@
             {/each}
         </div>
 
-        <div style="padding:20px;">
+        <div style="padding:0px 0px;">
             <h4>
                 {#if getNodeAttr(node, "iconKey")}
                     <svelte:component
@@ -125,7 +127,7 @@
                     type="source"
                     position={Position.Bottom}
                     id={output.id}
-                    style="width:8px;height:8px;"
+                    style="width:8px;height:8px;position:relative;left:revert;transform:revert;"
                 />
                 <div class="output-item">
                     {#if output.label}
@@ -144,6 +146,7 @@
         display: block;
         position: relative;
         border: 1px solid lightgray;
+        border-radius: 12px;
     }
 
     .inputs-container,

@@ -24,6 +24,7 @@ export interface INodeStyles {
 }
 
 export interface INodeTemplate {
+  templateId: string;
   name: string;
   iconKey: string;
   description: string;
@@ -48,8 +49,7 @@ export interface IHandle {
 
 export interface INode extends Partial<INodeTemplate> {
   id: NodeId;
-  // template: INodeTemplate;
-  templateName: string;
+  inheritsFrom: string;
   x: number;
   y: number;
 }
@@ -59,7 +59,7 @@ export function newNodeFromTemplate(nodeTemplate: INodeTemplate): INode {
     id: nanoid(),
     x: 0,
     y: 0,
-    templateName: nodeTemplate.name,
+    inheritsFrom: nodeTemplate.templateId,
     styles: {},
     inputs: nodeTemplate.inputs.map(inp => ({ ...inp, id: nanoid()})),
     outputs: nodeTemplate.outputs.map(out => ({ ...out, id: nanoid()})),

@@ -57,7 +57,7 @@
     import FlowNode from "./FlowNode.svelte";
 
     const INodeToXyFlowNode = (node: INode): XyFlowNode => ({
-        id: node.id.toString(),
+        id: node.id,
         type: "node",
         position: {
             x: node.x,
@@ -68,7 +68,7 @@
 
     const XyFlowNodeToINode = (node: XyFlowNode): INode => ({
         ...(get(node.data.node) as INode),
-        id: parseInt(node.id),
+        id: node.id,
         x: node.position.x,
         y: node.position.y,
     });
@@ -78,7 +78,7 @@
         node: INodeTemplate,
     ): XyFlowNode => ({
         ...INodeToXyFlowNode(newNodeFromTemplate(node)),
-        id: id.toString(),
+        // id: id.toString(),
     });
 
     let isSideNavOpen = false;

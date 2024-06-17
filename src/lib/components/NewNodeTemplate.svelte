@@ -18,13 +18,8 @@
     import { Add } from "carbon-icons-svelte";
     import { nanoid } from "nanoid";
 
-    let tagOptions: INodeTag[] = [
-        { name: "Tag1", color: "#ff0000" },
-        { name: "Tag2", color: "#00ff00" },
-        { name: "Tag3", color: "#0000ff" },
-    ];
-
     let nodeTemplate = writable<INodeTemplate>({
+        templateId: nanoid(),
         name: "Default Template",
         iconKey: "",
         description: "Default description",
@@ -46,14 +41,12 @@
         x: 0,
         y: 0,
         ...$nodeTemplate,
-        templateName: $nodeTemplate.name,
+        inheritsFrom: $nodeTemplate.templateId
     };
 
     $: node = {
-        // template: $nodeTemplate,
         ...node,
         ...$nodeTemplate,
-        templateName: $nodeTemplate.name,
     };
 
     $: console.log("->", node);
@@ -141,7 +134,6 @@
                         id="padding"
                         labelText="Input {index}"
                         bind:value={input.label}
-                        required
                     />
                 {/each}
             </div>

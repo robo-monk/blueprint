@@ -20,7 +20,7 @@
 
 <style lang="scss">
   .node {
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 3px 10px;
+    border-radius: 3px;
   }
 </style>

@@ -9,6 +9,7 @@
 
 <style lang="scss">
     .dot {
+        position:relative;
         width: 8px;
         height: 8px;
         border-radius: 25px;
