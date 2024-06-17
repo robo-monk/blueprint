@@ -53,34 +53,29 @@
                 id="width"
                 labelText="Width"
                 bind:value={$node.styles.width}
-                required
             />
             <TextInput
                 id="height"
                 labelText="Height"
                 bind:value={$node.styles.height}
-                required
             />
             <TextInput
                 id="backgroundColor"
                 labelText="Background Color"
                 bind:value={$node.styles.backgroundColor}
-                required
             />
             <TextInput
                 id="textColor"
                 labelText="Text Color"
                 bind:value={$node.styles.color}
-                required
             />
             <TextInput
                 id="padding"
                 labelText="Padding"
                 bind:value={$node.styles.padding}
-                required
             />
 
-            <IconSelector bind:icon={$node.styles.iconKey} />
+            <IconSelector bind:icon={$node.iconKey} />
             <!-- <MultiSelect
                 id="tags"
                 label="Tags"

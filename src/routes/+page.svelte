@@ -1,13 +1,6 @@
 <script lang="ts">
     import "carbon-components-svelte/css/g100.css";
     import { writable, type Writable } from "svelte/store";
-    import {
-        SvelteFlow,
-        Controls,
-        Background,
-        BackgroundVariant,
-        MiniMap,
-    } from "@xyflow/svelte";
 
     // 👇 this is important! You need to import the styles for Svelte Flow to work
     import "@xyflow/svelte/dist/style.css";
@@ -17,32 +10,7 @@
     import { onMount } from "svelte";
     import Project from "$lib/components/Project.svelte";
     import { InlineLoading } from "carbon-components-svelte";
-
-    let project = writable<IProject | null>(null);
-
-    $: if (globalThis?.localStorage) {
-        console.log("reading localstorage");
-        let _project = {
-            name: "Test",
-            templates: [],
-            nodes: [],
-        };
-
-        const saved = localStorage.getItem("project");
-        if (saved) {
-            try {
-                // @ts-ignore
-                _project = JSON.parse(saved);
-            } catch (e) {
-                console.warn(e);
-                localStorage.removeItem("project");
-            }
-        }
-        project.set(_project);
-    }
-
-    $: globalThis.localStorage?.setItem("project", JSON.stringify($project));
-    $: console.log($project);
+    import { project } from "$lib/writables/project.writable";
 </script>
 
 <!--

@@ -26,8 +26,10 @@ export interface INodeTemplate {
   name: string;
   iconKey: string;
   description: string;
-  styles: INodeStyles;
+  styles: Partial<INodeStyles>;
   tags: INodeTag[];
+  inputs: IHandle[];
+  outputs: IHandle[];
 }
 
 export interface INodeEdge {
@@ -37,12 +39,18 @@ export interface INodeEdge {
   label: string;
 }
 
-export interface INode extends INodeTemplate {
+export interface IHandle {
   id: NodeId;
-  template: INodeTemplate;
+  label: string;
+  color: string;
+}
+
+export interface INode extends Partial<INodeTemplate> {
+  id: NodeId;
+  // template: INodeTemplate;
+  templateName: string;
   x: number;
   y: number;
-  edges: INodeEdge[];
 }
 
 export function newNodeFromTemplate(nodeTemplate: INodeTemplate): INode {
@@ -50,8 +58,9 @@ export function newNodeFromTemplate(nodeTemplate: INodeTemplate): INode {
     id: 0,
     x: 0,
     y: 0,
-    template: nodeTemplate,
-    edges: [],
-    ...nodeTemplate,
+    templateName: nodeTemplate.name,
+    styles: {},
+    // inputs: [],
+    // outputs: [],
   };
 }

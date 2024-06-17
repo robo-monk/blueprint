@@ -15,6 +15,7 @@
         Tag,
     } from "carbon-components-svelte";
     import { writable } from "svelte/store";
+    import { Add } from "carbon-icons-svelte";
 
     let tagOptions: INodeTag[] = [
         { name: "Tag1", color: "#ff0000" },
@@ -37,19 +38,23 @@
     });
 
     let node: INode = {
-        template: $nodeTemplate,
+        // template: $nodeTemplate,
         id: 0,
         x: 0,
         y: 0,
         edges: [],
+        ...$nodeTemplate,
+        templateName: $nodeTemplate.name,
     };
 
     $: node = {
-        template: $nodeTemplate,
+        // template: $nodeTemplate,
         id: 0,
         x: 0,
         y: 0,
         edges: [],
+        ...$nodeTemplate,
+        templateName: $nodeTemplate.name,
     };
 
     $: console.log("->", node);
@@ -112,14 +117,13 @@
                 bind:value={$nodeTemplate.styles.color}
                 required
             />
-            <TextInput
+            <!-- <TextInput
                 id="padding"
                 labelText="Padding"
                 bind:value={$nodeTemplate.styles.padding}
                 required
-            />
-
-            <IconSelector bind:icon={$nodeTemplate.iconKey} />
+            /> -->
+           <IconSelector bind:icon={$nodeTemplate.iconKey} />
             <!-- <MultiSelect
                 id="tags"
                 label="Tags"
@@ -129,6 +133,57 @@
                 selectionFeedback="top-after-reopen"
                 title="Select tags"
             /> -->
+
+            <h5> Inputs </h5>
+
+            <div style="">
+                {#each $nodeTemplate?.inputs || [] as input, index}
+                    <TextInput
+                        id="padding"
+                        labelText="Input {index}"
+                        bind:value={input.label}
+                        required
+                    />
+                {/each}
+            </div>
+
+            <Button
+                kind="tertiary"
+                icon={Add}
+                on:click={() =>
+                    ($nodeTemplate.inputs = [
+                        ...($nodeTemplate.inputs || []),
+                        { label: "", color: "black", id: $nodeTemplate.inputs?.length || 0 },
+                    ])}
+            >
+            </Button>
+
+            <hr>
+
+            <h5> Outputs </h5>
+
+            <div style="">
+                {#each $nodeTemplate?.outputs || [] as output, index}
+                    <TextInput
+                        id="padding"
+                        labelText="Output {index}"
+                        bind:value={output.label}
+                    />
+                {/each}
+            </div>
+
+            <Button
+                kind="tertiary"
+                icon={Add}
+                on:click={() =>
+                    ($nodeTemplate.outputs = [
+                        ...($nodeTemplate.outputs || []),
+                        { label: "", color: "black", id: $nodeTemplate.outputs?.length || 0},
+                    ])}
+            >
+            </Button>
+
+ 
         </FormGroup>
 
         <Button type="submit">Create Template</Button>
